@@ -6,46 +6,47 @@ import com.skypro.ex.oop25.exception.EmployeeStorageIsFullException;
 import com.skypro.ex.oop25.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EmployeeService {
-    private final List<Employee> employees = new ArrayList<>();
-    private static final int maxSize =5;
+    private final Map<String, Employee> employees = new HashMap<>();
+    private static final int maxSize = 5;
 
     public Employee add(String firstName, String lastName) {
         if (employees.size() >= maxSize) {
             throw new EmployeeStorageIsFullException();
         }
         Employee employeeToAdd = new Employee(firstName, lastName);
-        if (employees.contains(employeeToAdd)){
+        if (employees.containsKey(createKey(firstName, lastName))) {
             throw new EmployeeAlreadyAddedException();
         }
-        employees.add(employeeToAdd);
+        employees.put(createKey(firstName, lastName), employeeToAdd);
         return employeeToAdd;
     }
 
     public Employee remove(String firstName, String lastName) {
         Employee employeeToRemove = new Employee(firstName, lastName);
-        if (!employees.contains(employeeToRemove)) {
+        if (!employees.containsKey(createKey(firstName, lastName))) {
             throw new EmployeeNotFoundException();
         }
-        employees.remove(employeeToRemove);
-        return employeeToRemove;
+        return employees.remove(createKey(firstName, lastName));
     }
 
     public Employee find(String firstName, String lastName) {
-        for (Employee employee : employees) {
-            if (firstName.equalsIgnoreCase(employee.getFirstName())
-                    && lastName.equalsIgnoreCase(employee.getLastName())) {
-                return employee;
-            }
+        if (!employees.containsKey(createKey(firstName, lastName))) {
+            throw new EmployeeNotFoundException();
         }
-        throw new EmployeeNotFoundException();
+        return employees.get(createKey(firstName, lastName));
     }
+
     public List<Employee> getAll() {
-        return Collections.unmodifiableList(employees);
+        return List.copyOf(employees.values());
     }
+
+    private String createKey(String firstName, String lastName) {
+        String key = firstName + lastName;
+        return key.toLowerCase();
+    }
+
 }
