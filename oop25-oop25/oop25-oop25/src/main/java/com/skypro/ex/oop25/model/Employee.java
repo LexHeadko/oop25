@@ -61,7 +61,9 @@ public class Employee {
     public String toString() {
         return  "Работник {" +
                 "Имя = " + firstName + " " +
-                "Фамилия = " + lastName +
+                "Фамилия = " + lastName + " " +
+                "Отдел = " + department + " " +
+                "Зарплата = " + salary +
                 "}";
     }
 }
