@@ -10,43 +10,41 @@ import java.util.*;
 
 @Service
 public class EmployeeService {
-    private final Map<String, Employee> employees = new HashMap<>();
     private static final int maxSize = 5;
+    private final Map<String, Employee> employees = new HashMap<>(maxSize);
 
-    public Employee add(String firstName, String lastName) {
+    public Collection<Employee> getAll() {
+        return employees.values();
+    }
+
+    public Employee add(Employee employee) {
         if (employees.size() >= maxSize) {
             throw new EmployeeStorageIsFullException();
         }
-        Employee employeeToAdd = new Employee(firstName, lastName);
-        if (employees.containsKey(createKey(firstName, lastName))) {
+        if (employees.containsKey(createKey(employee))) {
             throw new EmployeeAlreadyAddedException();
         }
-        employees.put(createKey(firstName, lastName), employeeToAdd);
-        return employeeToAdd;
+        employees.put(createKey(employee), employee);
+        return employee;
     }
 
     public Employee remove(String firstName, String lastName) {
-        Employee employeeToRemove = new Employee(firstName, lastName);
-        if (!employees.containsKey(createKey(firstName, lastName))) {
-            throw new EmployeeNotFoundException();
-        }
         return employees.remove(createKey(firstName, lastName));
     }
 
     public Employee find(String firstName, String lastName) {
-        if (!employees.containsKey(createKey(firstName, lastName))) {
+        Employee employee = employees.get(createKey(firstName, lastName));
+        if (employee == null) {
             throw new EmployeeNotFoundException();
         }
-        return employees.get(createKey(firstName, lastName));
+        return employee;
     }
 
-    public List<Employee> getAll() {
-        return List.copyOf(employees.values());
+    private static String createKey(Employee employee) {
+        return createKey(employee.getFirstName(), employee.getLastName());
     }
-
-    private String createKey(String firstName, String lastName) {
+    private static String createKey(String firstName, String lastName) {
         String key = firstName + lastName;
         return key.toLowerCase();
     }
-
 }
