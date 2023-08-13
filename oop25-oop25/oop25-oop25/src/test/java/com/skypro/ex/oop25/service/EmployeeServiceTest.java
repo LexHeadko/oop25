@@ -75,4 +75,26 @@ public class EmployeeServiceTest {
                 "name",
                 "family"));
     }
+    @Test
+    void removePositive() {
+        Employee employee = new Employee(
+                "Aleksandr",
+                "Golovko",
+                1,
+                10000000);
+        employeeService.add(employee);
+        employeeService.remove("Aleksandr", "Golovko");
+        assertFalse(employeeService.getAll().contains(employee));
+    }
+    @Test
+    void removeNegative() {
+        Employee employee = new Employee(
+                "Aleksandr",
+                "Golovko",
+                1,
+                10000000);
+        employeeService.add(employee);
+        Employee actual = employeeService.remove("Aleks", "Golovko");
+        assertNull(actual);
+    }
 }
