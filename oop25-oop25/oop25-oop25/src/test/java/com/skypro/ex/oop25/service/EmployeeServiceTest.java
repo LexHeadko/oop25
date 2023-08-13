@@ -1,6 +1,7 @@
 package com.skypro.ex.oop25.service;
 
 import com.skypro.ex.oop25.exception.EmployeeAlreadyAddedException;
+import com.skypro.ex.oop25.exception.EmployeeNotFoundException;
 import com.skypro.ex.oop25.exception.EmployeeStorageIsFullException;
 import com.skypro.ex.oop25.model.Employee;
 import org.junit.jupiter.api.Test;
@@ -49,5 +50,29 @@ public class EmployeeServiceTest {
                 10000000);
         employeeService.add(employee);
         assertTrue(employeeService.getAll().contains(employee));
+    }
+    @Test
+    void findPositive() {
+        Employee employee = new Employee(
+                "Aleksandr",
+                "Golovko",
+                1,
+                10000000);
+        employeeService.add(employee);
+        Employee actual = employeeService.find("Aleksandr", "Golovko");
+        assertNotNull(actual);
+        assertEquals(employee,actual);
+    }
+    @Test
+    void findNegative() {
+        Employee employee = new Employee(
+                "Aleksandr",
+                "Golovko",
+                1,
+                10000000);
+        employeeService.add(employee);
+        assertThrows(EmployeeNotFoundException.class, () -> employeeService.find(
+                "name",
+                "family"));
     }
 }
